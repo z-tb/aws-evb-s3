@@ -16,9 +16,53 @@
  - AWS credentials with sufficient permissions to create resources (S3, Lambda, IAM, CloudWatch, EventBridge)
  
  ## Usage
+A Makefile is provided for convenience but is not required. You can use the Terraform commands directly as outlined below. If you choose to use the Makefile, note that it is set up to use OpenTofu rather than Terraform. To switch back to Terraform, modify the `TF` variable in the Makefile. You will also need to set the `AWS_PROFILE` variable, which specifies the AWS profile to use, corresponding to a profile configured in your `~/.aws/credentials` and `~/.aws/config` files. This is only recommended if you develop in a temporary environment (container launched with `--rm`) and/or you are using temporary credentialing. Otherwise, do not use the `~/.aws/credentials` file at all and simply export the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` into the environment. Terraform automatically checks for these environment variables to authenticate with AWS. If they?re set, Terraform uses them to access and manage your AWS resources [along with a few other vars you can use.](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
-A Makefile is provided but is not necessarily needed. You can provision by hand using the terraform commands below. If you do use the Makefile, note that is is configured to use OpenTofu instead of Terraform. You will need to change the TF variable in the file and the AWS_PROFILE variable which will point to the config stanza in your `~/.aws/credentials` and `~/.aws/config`. 
- 
+## AWS Config Example
+**~/.aws/credentials**
+This file stores your AWS access key ID and secret access key. Replace `acloud` with the desired profile name.
+
+```plaintext
+[acloud]
+aws_access_key_id = AKI...7QH4L
+aws_secret_access_key = Wzq1h...cQB7pLfwt4w
+```
+
+**~/.aws/config**
+This file specifies the default region and output format. Replace `[default]` with `[acloud]` if you want to configure this profile specifically.
+
+```plaintext
+[default]
+region = us-east-1
+output = json
+```
+
+## Using the Makefile or Terraform Commands
+
+Follow the steps below to provision your infrastructure:
+
+1. **Clone the Repository**:
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
+
+2. **Initialize Terraform**:
+   ```bash
+   terraform init
+   ```
+
+3. **Plan the Infrastructure**:
+   ```bash
+   terraform plan -var-file="dev.tfvars"
+   ```
+
+4. **Apply the Infrastructure**:
+   ```bash
+   terraform apply -var-file="dev.tfvars"
+   ```
+
+Makefile 
  1. **Clone the Repository**:
     ```bash
     git clone <repository-url>
@@ -27,18 +71,19 @@ A Makefile is provided but is not necessarily needed. You can provision by hand 
  
  2. **Initialize Terraform**:
     ```bash
-    terraform init
+    make init
     ```
  
  3. **Plan the Infrastructure**:
     ```bash
-    terraform plan -var-file="dev.tfvars"
+    make plan
     ```
  
  4. **Apply the Infrastructure**:
     ```bash
-    terraform apply -var-file="dev.tfvars"
+    make apply
     ```
+
  
  ## Resources Created
  
